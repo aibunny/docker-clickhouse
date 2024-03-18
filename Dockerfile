@@ -125,7 +125,7 @@ ENV TZ UTC
 
 RUN mkdir /docker-entrypoint-initdb.d
 
-COPY docker_related_config.xml /etc/clickhouse-server/config.d/
+COPY ./config_files/docker_related_config.xml /etc/clickhouse-server/config.d/
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
