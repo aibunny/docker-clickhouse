@@ -1,0 +1,20 @@
+version: "3"
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8123:8123" # http
+      - "9000:9000" # native protocol
+      - "9009:9009"
+    volumes:
+      - ./entrypoint.sh:/entrypoint.sh
+      - clickhouse-data:/var/lib/clickhouse/
+      - clickhouse-logs:/var/log/clickhouse-server/
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+
+volumes:
+  clickhouse-data:
+  clickhouse-logs:
