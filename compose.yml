@@ -1,13 +1,20 @@
 version: "3"
+
 services:
   clickhouse:
-    image: clickhouse/clickhouse-server
+    build:
+      context: .
+      args:
+        CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+        CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+        CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: ${CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT}
+        CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
     restart: always
     env_file:
       - .env
     ports:
-      - "8123:8123" # http
-      - "9000:9000" # native protocol
+      - "8123:8123" # HTTP
+      - "9000:9000" # Native protocol
       - "9009:9009"
     volumes:
       - ./entrypoint.sh:/entrypoint.sh
