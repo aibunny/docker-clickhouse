@@ -220,18 +220,14 @@ fi
 
 set -e
 
-if [ "$MATERIALIZE_PSQL" == "True" ]; then
-    clickhouse-client -n <<-EOSQL
+#Allow materialization features
+clickhouse-client -n <<-EOSQL
         SET allow_experimental_database_materialized_postgresql=1;
-        CREATE DATABASE $PSQL_DATABASE_NAME
-        ENGINE = MaterializedPostgreSQL(
-            '$PSQL_DATABASE_HOST:$PSQL_DATABASE_PORT',
-            '$PSQL_DATABASE_NAME',
-            '$PSQL_DATABASE_USER',
-            '$PSQL_DATABASE_PASSWORD'
-        );
+        SET allow_experimental_database_materialized_mysql=1;
 EOSQL
-fi
+
+
+
 
 # Otherwise, we assume the user want to run his own process, for example a `bash` shell to explore this image
 exec "$@"
