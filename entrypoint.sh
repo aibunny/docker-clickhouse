@@ -197,7 +197,7 @@ if [ -n "${RUN_INITDB_SCRIPTS}" ]; then
         clickhouse-client -n <<-EOSQL
                 SET allow_experimental_database_materialized_postgresql=1;
                 SET allow_experimental_database_materialized_mysql=1;
-        EOSQL
+EOSQL
 
         echo "⚙️ 🔧🔧🔧🔧🔧🔧🔧🔧Adding database materialization for postgresql (PSQL) / MYSQl 🔧🔧🔧🔧🔧🔧🔧⚙️"
 
@@ -211,7 +211,7 @@ if [ -n "${RUN_INITDB_SCRIPTS}" ]; then
                 '$PSQL_DATABASE_USER',
                 '$PSQL_DATABASE_PASSWORD'
             );
-          EOSQL
+EOSQL
         fi
 
         #Optionally materialize mysql database
@@ -225,7 +225,7 @@ if [ -n "${RUN_INITDB_SCRIPTS}" ]; then
                 '$MYSQL_DATABASE_USER',
                 '$MYSQL_DATABASE_PASSWORD'
             );
-          EOSQL
+EOSQL
         fi
 
         echo "🔧🔧 🔧🔧 🔧🔧 CUSTOM MATERIALIZATIONS DONE 🔧🔧"
