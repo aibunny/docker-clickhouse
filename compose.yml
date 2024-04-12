@@ -21,7 +21,7 @@ services:
       - ./entrypoint.sh:/entrypoint.sh
       - clickhouse-data:/var/lib/clickhouse/
       - clickhouse-logs:/var/log/clickhouse-server/
-    entrypoint: ["/bin/bash", "/entrypoint.sh", "/materialization/init-db.sh"]
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
 
 volumes:
   clickhouse-data:

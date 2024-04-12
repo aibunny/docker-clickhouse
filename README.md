@@ -4,7 +4,7 @@ Running
 
 docker compose up -d --build
 
-If m
+
 
 
 For postgres materialization add this to postgresql.conf

@@ -5,8 +5,7 @@ echo "⚙️ 🔧🔧🔧🔧🔧🔧🔧🔧Adding database materialization for
 
 
 
-#Optionally materialize psql databse
-
+#Optionally materialize psql database
 if [ "$MATERIALIZE_PSQL" == "True" ]; then
     clickhouse-client -n <<-EOSQL
         CREATE DATABASE $PSQL_DATABASE_NAME
@@ -19,9 +18,7 @@ if [ "$MATERIALIZE_PSQL" == "True" ]; then
 EOSQL
 fi
 
-
 #Optionally materialize mysql database
-
 if [ "$MATERIALIZE_MYSQL" == "True" ]; then
     clickhouse-client -n <<-EOSQL
         CREATE DATABASE $MYSQL_DATABASE_NAME

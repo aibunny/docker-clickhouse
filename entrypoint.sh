@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -eo pipefail
 shopt -s nullglob
 
@@ -69,7 +68,7 @@ function create_directory_and_do_chown() {
 
     if [ "$DO_CHOWN" = "1" ]; then
         # ensure proper directories permissions
-        # but skip it for if directory already has proper premissions, cause recursive chown may be slow
+        # but skip it for if directory already has proper permissions, cause recursive chown may be slow
         if [ "$(stat -c %u "$dir")" != "$USER" ] || [ "$(stat -c %g "$dir")" != "$GROUP" ]; then
             chown -R "$USER:$GROUP" "$dir"
         fi
@@ -191,10 +190,52 @@ if [ -n "${RUN_INITDB_SCRIPTS}" ]; then
             echo >&2 'Finishing of ClickHouse init process failed.'
             exit 1
         fi
+
+        echo "🔧🔧 STARTING CUSTOM CONFIGS 🔧🔧"
+
+        #Allow materialization features
+        clickhouse-client -n <<-EOSQL
+                SET allow_experimental_database_materialized_postgresql=1;
+                SET allow_experimental_database_materialized_mysql=1;
+        EOSQL
+
+        echo "⚙️ 🔧🔧🔧🔧🔧🔧🔧🔧Adding database materialization for postgresql (PSQL) / MYSQl 🔧🔧🔧🔧🔧🔧🔧⚙️"
+
+        #Optionally materialize psql databse
+        if [ "$MATERIALIZE_PSQL" == "True" ]; then
+          clickhouse-client -n <<-EOSQL
+            CREATE DATABASE $PSQL_DATABASE_LABEL
+            ENGINE = MaterializedPostgreSQL(
+                '$PSQL_DATABASE_HOST:$PSQL_DATABASE_PORT',
+                '$PSQL_DATABASE_NAME',
+                '$PSQL_DATABASE_USER',
+                '$PSQL_DATABASE_PASSWORD'
+            );
+          EOSQL
+        fi
+
+        #Optionally materialize mysql database
+
+        if [ "$MATERIALIZE_MYSQL" == "True" ]; then
+          clickhouse-client -n <<-EOSQL
+            CREATE DATABASE $MYSQL_DATABASE_LABEL
+            ENGINE = MaterializedMySQL(
+                '$MYSQL_DATABASE_HOST:$MYSQL_DATABASE_PORT',
+                '$MYSQL_DATABASE_NAME',
+                '$MYSQL_DATABASE_USER',
+                '$MYSQL_DATABASE_PASSWORD'
+            );
+          EOSQL
+        fi
+
+        echo "🔧🔧 🔧🔧 🔧🔧 CUSTOM MATERIALIZATIONS DONE 🔧🔧"
+
+
     fi
 else
     echo "ClickHouse Database directory appears to contain a database; Skipping initialization"
 fi
+
 
 # if no args passed to `docker run` or first argument start with `--`, then the user is passing clickhouse-server arguments
 if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
@@ -217,14 +258,6 @@ if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
     fi
 fi
 
-
-set -e
-
-#Allow materialization features
-clickhouse-client -n <<-EOSQL
-        SET allow_experimental_database_materialized_postgresql=1;
-        SET allow_experimental_database_materialized_mysql=1;
-EOSQL
 
 
 
